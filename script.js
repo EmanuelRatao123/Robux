@@ -1,105 +1,23 @@
 let selectedAmount = 0;
 let currentRobux = 0;
-let currentUserId = null;
-
-// Função para buscar usuário do Roblox
-async function searchRobloxUser(username) {
-    try {
-        // Usar API do Roblox via roproxy
-        const response = await fetch(`https://users.roproxy.com/v1/usernames/users`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                usernames: [username]
-            })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Falha na busca');
-        }
-        
-        const data = await response.json();
-        
-        if (!data.data || data.data.length === 0) {
-            throw new Error('Usuário não encontrado');
-        }
-        
-        const user = data.data[0];
-        currentUserId = user.id;
-        
-        return {
-            id: user.id,
-            username: user.name,
-            displayName: user.displayName,
-            avatar: `https://www.roblox.com/headshot-thumbnail/image?userId=${user.id}&width=150&height=150&format=png`
-        };
-    } catch (error) {
-        console.error('Erro:', error);
-        throw new Error('Não foi possível buscar o usuário. Tente novamente.');
-    }
-}
-
-// Buscar usuário
-document.getElementById('search-btn').addEventListener('click', async () => {
-    const username = document.getElementById('username-input').value.trim();
-    const searchBtn = document.getElementById('search-btn');
-    
-    if (!username) {
-        alert('Digite um nick primeiro!');
-        return;
-    }
-    
-    searchBtn.disabled = true;
-    searchBtn.textContent = 'BUSCANDO...';
-    
-    try {
-        const userInfo = await searchRobloxUser(username);
-        displayUserProfile(userInfo);
-    } catch (error) {
-        alert(error.message);
-    } finally {
-        searchBtn.disabled = false;
-        searchBtn.textContent = '🔍 BUSCAR';
-    }
-});
-
-// Enter no input
-document.getElementById('username-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        document.getElementById('search-btn').click();
-    }
-});
-
-function displayUserProfile(userInfo) {
-    document.getElementById('user-avatar').src = userInfo.avatar;
-    document.getElementById('user-display-name').textContent = userInfo.displayName;
-    document.getElementById('user-id').textContent = userInfo.id;
-    document.getElementById('user-username').textContent = userInfo.username;
-    document.getElementById('user-profile').classList.remove('hidden');
-}
 
 // Mensagens do terminal de hack
-function getHackMessages() {
-    return [
-        "Iniciando conexão com servidores Roblox...",
-        "Conectado! IP: 192.168.1.xxx",
-        "Bypassing sistema de segurança...",
-        "Acesso autorizado ✓",
-        `Localizando conta do usuário ID: ${currentUserId}...`,
-        "Usuário encontrado! Verificando permissões...",
-        "Injetando código de Robux...",
-        "Executando exploit RBX_GENERATOR_2024...",
-        "Decodificando tokens de autenticação...",
-        "Validando transação...",
-        "Robux sendo transferidos...",
-        "██████████ 100% COMPLETO",
-        "Hack executado com sucesso!",
-        "Robux adicionados à conta!"
-    ];
-}
+const hackMessages = [
+    "Iniciando conexão com servidores Roblox...",
+    "Conectado! IP: 192.168.1.xxx",
+    "Bypassing sistema de segurança...",
+    "Acesso autorizado ✓",
+    "Localizando conta do usuário...",
+    "Usuário encontrado! ID: #" + Math.floor(Math.random() * 1000000),
+    "Injetando código de Robux...",
+    "Executando exploit RBX_GENERATOR_2024...",
+    "Decodificando tokens de autenticação...",
+    "Validando transação...",
+    "Robux sendo transferidos...",
+    "██████████ 100% COMPLETO",
+    "Hack executado com sucesso!",
+    "Robux adicionados à conta!"
+];
 
 // Seleção de quantidade
 document.querySelectorAll('.amount-btn').forEach(btn => {
@@ -112,11 +30,6 @@ document.querySelectorAll('.amount-btn').forEach(btn => {
 
 // Botão principal de gerar
 document.getElementById('generate-btn').addEventListener('click', () => {
-    if (!currentUserId) {
-        alert('Busque seu perfil primeiro!');
-        return;
-    }
-    
     if (selectedAmount === 0) {
         alert('Selecione uma quantidade primeiro!');
         return;
@@ -140,7 +53,6 @@ function startHackSimulation() {
     
     // Simular digitação das mensagens
     let messageIndex = 0;
-    const hackMessages = getHackMessages();
     
     function typeMessage() {
         if (messageIndex >= hackMessages.length) {
